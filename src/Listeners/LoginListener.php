@@ -35,7 +35,7 @@ class LoginListener
                 'user_agent' => $userAgent,
                 'login_at' => now(),
                 'login_successful' => true,
-                'location' => config('authentication-log.notifications.new-device.location') ? optional(geoip()->getLocation($ip))->toArray() : null,
+                'location' => config('authentication-log.notifications.new-device.location') ? $this->getLocationByIp($ip) : null,
             ]);
 
             if (! $known && ! $newUser && config('authentication-log.notifications.new-device.enabled')) {
@@ -43,5 +43,12 @@ class LoginListener
                 $user->notify(new $newDevice($log));
             }
         }
+    }
+    
+     protected function getLocationByIp($ip)
+    {
+        $response = \Http::get('http://ip-api.com/json/'.$ip);
+
+        return $response->json();
     }
 }
