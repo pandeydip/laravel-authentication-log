@@ -44,7 +44,7 @@ class LoginListener
             }
         }
     }
-    
+
      protected function getLocationByIp($ip)
     {
         $response = \Http::get('http://ip-api.com/json/'.$ip);

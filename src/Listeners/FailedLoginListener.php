@@ -28,7 +28,7 @@ class FailedLoginListener
                 'user_agent' => $this->request->userAgent(),
                 'login_at' => now(),
                 'login_successful' => false,
-                'location' => config('authentication-log.notifications.new-device.location') ? optional(geoip()->getLocation($ip))->toArray() : null,
+                'location' => config('authentication-log.notifications.new-device.location') ? $this->getLocationByIp($ip) : null,
             ]);
 
             if (config('authentication-log.notifications.failed-login.enabled')) {
@@ -36,5 +36,12 @@ class FailedLoginListener
                 $event->user->notify(new $failedLogin($log));
             }
         }
+    }
+
+    protected function getLocationByIp($ip)
+    {
+        $response = \Http::get('http://ip-api.com/json/'.$ip);
+
+        return $response->json();
     }
 }
